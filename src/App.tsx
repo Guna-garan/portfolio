@@ -1,5 +1,6 @@
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import BackgroundField from "@/components/BackgroundField";
+import ParticlesBackground from "@/components/ParticlesBackground";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
@@ -23,6 +24,7 @@ export default function App() {
           Skip to content
         </a>
         <BackgroundField />
+        <ParticlesBackground />
         <CustomCursor />
         <ScrollProgress />
         <Navbar />
