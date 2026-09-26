@@ -6,8 +6,6 @@ export const roles = [
 ];
 
 export const stats = [
-  { label: "Years building software", value: "3+" },
-  { label: "Production projects shipped", value: "10+" },
   { label: "Core stack mastered", value: "React · Spring Boot" },
   { label: "Focus area", value: "AI-driven systems" },
 ];
@@ -34,18 +32,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "ecommerce-platform",
-    title: "E-Commerce Platform",
-    description:
-      "A responsive online storefront with product browsing, cart management, and checkout flow, built from the ground up with core web technologies.",
-    stack: ["HTML", "CSS", "JavaScript"],
-    highlights: [
-      "Dynamic cart and checkout logic in vanilla JS",
-      "Fully responsive across mobile, tablet, and desktop",
-      "Optimized asset loading for fast page speed",
-    ],
-  },
-  {
     id: "ai-resume-screener",
     title: "AI Resume Screener",
     description:
@@ -55,6 +41,31 @@ export const projects: Project[] = [
       "Automated keyword and skill extraction from resumes",
       "Candidate scoring model trained on labeled data",
       "Simple upload-and-review interface for recruiters",
+    ],
+  },
+  {
+    id: "livepoll",
+    title: "LivePoll",
+    description:
+    "A real-time polling platform that lets users create polls, share them with an audience, and view live voting results instantly without refreshing the page.",
+    stack: ["React", "Go", "Gin", "MongoDB", "Redis", "WebSockets"],
+    highlights: [
+    "Real-time vote updates using Redis and WebSockets",
+    "Secure authentication with protected poll creation and management",
+    "Persistent poll and vote data stored in MongoDB",
+    "Responsive and interactive UI for seamless voting across devices",
+    ],
+  },
+  {
+    id: "ecommerce-platform",
+    title: "E-Commerce Platform",
+    description:
+      "A responsive online storefront with product browsing, cart management, and checkout flow, built from the ground up with core web technologies.",
+    stack: ["HTML", "CSS", "JavaScript"],
+    highlights: [
+      "Dynamic cart and checkout logic in vanilla JS",
+      "Fully responsive across mobile, tablet, and desktop",
+      "Optimized asset loading for fast page speed",
     ],
   },
   {
