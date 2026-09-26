@@ -14,6 +14,7 @@ export default function Footer() {
             <a
               key={s.label}
               href={s.href}
+              target="_blank" 
               data-cursor-hover
               className="text-sm text-mist transition-colors hover:text-signal-cyan"
             >
