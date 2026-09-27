@@ -40,9 +40,7 @@ export default function Hero() {
               <RoleRotator />
             </div>
             <p className="mt-6 max-w-md text-base leading-relaxed text-mist">
-              Full stack developer and AI engineer turning complex problems —
-              from inventory logistics to language models — into fast,
-              reliable products.
+              As a developer, I take pleasure in transforming concepts into functional products, ranging from AI applications and backend systems.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -68,6 +66,7 @@ export default function Hero() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
+                  target="_blank"
                   data-cursor-hover
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-mist transition-colors hover:border-signal-cyan/50 hover:text-signal-cyan"
                 >
@@ -222,13 +221,13 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.6 }}
               className="glass absolute -right-4 top-6 hidden w-36 rounded-xl p-3 sm:block lg:-right-10"
             >
-              <p className="font-mono text-[10px] text-signal-cyan">STATUS</p>
+              <p className="font-mono text-[10px] text-signal-violet">STATUS</p>
               <p className="mt-1 text-xs text-mist-bright">Systems online</p>
               {!reduceEffects && (
                 <motion.div
                   animate={{ width: ["30%", "100%", "60%", "100%"] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="mt-2 h-[2px] rounded-full bg-signal-cyan/60"
+                  className="mt-2 h-[2px] rounded-full bg-signal-violet/60"
                 />
               )}
             </motion.div>
@@ -239,7 +238,7 @@ export default function Hero() {
               className="glass absolute -bottom-6 -left-4 hidden w-40 rounded-xl p-3 sm:block lg:-left-10"
             >
               <p className="font-mono text-[10px] text-signal-violet">STACK</p>
-              <p className="mt-1 text-xs text-mist-bright">React · Spring Boot · ML</p>
+              <p className="mt-1 text-xs text-mist-[#484547]">React · Spring Boot · ML</p>
               {!reduceEffects && (
                 <motion.div
                   animate={{ opacity: [0.4, 1, 0.4] }}

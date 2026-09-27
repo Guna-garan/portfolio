@@ -8,7 +8,7 @@ export default function About() {
       <SectionHeading
         kicker="ABOUT"
         title="Engineering with intent"
-        description="I focus on building software that behaves predictably at scale and AI systems that solve a real, narrow problem well — not demos, but tools people actually rely on."
+        description="I concentrate on creating software that acts consistently at scale and AI systems that effectively address a specific, real-world issue; these are tools that people genuinely use, not demonstrations.."
       />
 
       <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -37,14 +37,7 @@ export default function About() {
         className="glass mt-6 rounded-2xl p-8 sm:p-10"
       >
         <p className="max-w-3xl text-base leading-relaxed text-mist sm:text-lg">
-          My work sits at the intersection of solid backend architecture and
-          applied machine learning. I&apos;ve built systems that manage
-          physical inventory in real time, an e-commerce experience from raw
-          HTML and JavaScript, a resume screener that reasons about
-          candidates the way a recruiter would, and a generative model that
-          writes in believable human handwriting. Each project taught me the
-          same lesson: the interesting part is rarely the algorithm — it is
-          getting the whole system to feel simple.
+          I work at the junction of applied machine learning and reliable backend architecture. I've created real-time physical inventory management systems, an e-commerce platform using raw HTML and JavaScript, a resume screener that evaluates applicants in the same manner as a recruiter, and a generative model that produces readable human handwriting. I learned the same thing from every project: making the entire system feel straightforward is usually more interesting than the algorithm itself.
         </p>
       </motion.div>
     </section>
