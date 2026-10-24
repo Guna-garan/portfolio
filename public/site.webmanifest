@@ -1,0 +1,16 @@
+{
+  "name": "Nova — Full Stack & AI Engineer Portfolio",
+  "short_name": "Nova",
+  "description": "Full stack developer and AI engineer portfolio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05070C",
+  "theme_color": "#05070C",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
