@@ -4,21 +4,28 @@ import { Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import SectionHeading from "./SectionHeading";
 
-// ─── EmailJS credentials (loaded from .env.local — never committed to git) ──
-const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
-const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
-// ────────────────────────────────────────────────────────────────────────────
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+const CONTACT_EMAIL = "gunagaran08@gmail.com";
 
 export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formRef.current) return;
 
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+      setErrorMessage("The contact form is not configured yet.");
+      setStatus("error");
+      return;
+    }
+
     setStatus("loading");
+    setErrorMessage("");
     try {
       await emailjs.sendForm(
         EMAILJS_SERVICE_ID,
@@ -28,11 +35,11 @@ export default function Contact() {
       );
       setStatus("sent");
       formRef.current.reset();
-      // Reset back to idle after 5 seconds so the user can send another message
       setTimeout(() => setStatus("idle"), 5000);
-    } catch {
+    } catch (error: unknown) {
+      console.error("EmailJS contact form submission failed:", error);
+      setErrorMessage("Your message could not be sent. Please try again or email me directly.");
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 4000);
     }
   }
 
@@ -89,7 +96,13 @@ export default function Contact() {
         {status === "error" && (
           <p className="flex items-center gap-2 text-sm text-red-400">
             <AlertCircle size={16} />
-            Something went wrong. Please try again.
+            {errorMessage}{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="underline underline-offset-2 hover:text-red-300"
+            >
+              Email me
+            </a>
           </p>
         )}
 

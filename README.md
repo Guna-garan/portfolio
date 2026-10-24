@@ -18,6 +18,18 @@ npm install
 npm run dev
 ```
 
+## Contact form
+
+The contact form uses EmailJS. Copy `.env.example` to `.env.local` and set
+`VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, and
+`VITE_EMAILJS_PUBLIC_KEY` using the values from your EmailJS dashboard. The
+EmailJS template should use the form fields `from_name`, `from_email`, and
+`message`. Restart the development server after changing environment variables.
+
+For a deployed site, add the same variables in the hosting provider's environment
+settings and rebuild/redeploy. If EmailJS is not configured or a send fails, the
+form offers a direct email link as a fallback.
+
 ## Structure
 - `src/components/`: Reusable UI components.
 - `src/data/`: Content and data for the portfolio.
