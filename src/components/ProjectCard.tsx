@@ -78,20 +78,35 @@ export default function ProjectCard({ project, index }: { project: Project; inde
           ))}
         </div>
 
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          data-cursor-hover
-          className="relative mt-5 flex items-center gap-1.5 text-sm font-medium text-mist-bright hover:text-signal-cyan"
-        >
-          {expanded ? "Hide details" : "View details"}
-          <motion.span
-            animate={{ rotate: expanded ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
+        <div className="relative mt-5 flex items-center justify-between gap-3">
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            data-cursor-hover
+            className="flex items-center gap-1.5 text-sm font-medium text-mist-bright hover:text-signal-cyan"
           >
-            <ChevronDown size={16} />
-          </motion.span>
-        </button>
+            {expanded ? "Hide details" : "View details"}
+            <motion.span
+              animate={{ rotate: expanded ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronDown size={16} />
+            </motion.span>
+          </button>
+
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor-hover
+              className="inline-flex items-center gap-1.5 rounded-full border border-signal-cyan/30 bg-signal-cyan/5 px-3 py-1.5 text-xs font-medium text-signal-cyan transition-colors hover:border-signal-cyan/60 hover:bg-signal-cyan/10"
+            >
+              GitHub
+              <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </div>
 
         <AnimatePresence initial={false}>
           {expanded && (
