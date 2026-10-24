@@ -1,12 +1,8 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import emailjs from "@emailjs/browser";
 import SectionHeading from "./SectionHeading";
 
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const CONTACT_EMAIL = "gunagaran08@gmail.com";
 
 export default function Contact() {
@@ -18,27 +14,34 @@ export default function Contact() {
     e.preventDefault();
     if (!formRef.current) return;
 
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      setErrorMessage("The contact form is not configured yet.");
-      setStatus("error");
-      return;
-    }
-
     setStatus("loading");
     setErrorMessage("");
     try {
-      await emailjs.sendForm(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        formRef.current,
-        { publicKey: EMAILJS_PUBLIC_KEY }
-      );
+      const formData = new FormData(formRef.current);
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from_name: formData.get("from_name"),
+          from_email: formData.get("from_email"),
+          message: formData.get("message"),
+        }),
+      });
+      const result: { error?: string } = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Your message could not be sent.");
+      }
+
       setStatus("sent");
       formRef.current.reset();
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error: unknown) {
-      console.error("EmailJS contact form submission failed:", error);
-      setErrorMessage("Your message could not be sent. Please try again or email me directly.");
+      console.error("Contact form submission failed:", error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Your message could not be sent. Please try again or email me directly."
+      );
       setStatus("error");
     }
   }

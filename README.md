@@ -20,15 +20,37 @@ npm run dev
 
 ## Contact form
 
-The contact form uses EmailJS. Copy `.env.example` to `.env.local` and set
-`VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, and
-`VITE_EMAILJS_PUBLIC_KEY` using the values from your EmailJS dashboard. The
-EmailJS template should use the form fields `from_name`, `from_email`, and
-`message`. Restart the development server after changing environment variables.
+The contact form sends submissions to a Vercel API route, which forwards them to
+a Power Automate flow that adds a row to the Excel workbook. To configure it:
 
-For a deployed site, add the same variables in the hosting provider's environment
-settings and rebuild/redeploy. If EmailJS is not configured or a send fails, the
-form offers a direct email link as a fallback.
+1. Upload `public/contact form.xlsx` to OneDrive or SharePoint.
+2. In the workbook, format the `Name`, `Email`, and `Message` header row and
+   columns as an Excel table named `ContactSubmissions`.
+3. Create a Power Automate flow with a **When an HTTP request is received**
+   trigger. Use a JSON schema with required string fields `from_name`,
+   `from_email`, and `message`:
+
+   ```json
+   {
+     "type": "object",
+     "properties": {
+       "from_name": { "type": "string" },
+       "from_email": { "type": "string" },
+       "message": { "type": "string" }
+     },
+     "required": ["from_name", "from_email", "message"]
+   }
+   ```
+4. Add an **Add a row into a table** action for the uploaded workbook and map
+   `from_name` to `Name`, `from_email` to `Email`, and `message` to `Message`.
+   Add a **Response** action after it that returns HTTP 200 with `{"ok":true}`.
+5. Copy the flow's HTTP POST URL to `CONTACT_FLOW_URL` in `.env.local` for local
+   development and to the Vercel project's server-side environment variables
+   for deployment. Do not use a `VITE_` prefix or expose the URL in client code.
+6. Use `npx vercel dev` to run the site locally with its API route. Redeploy
+   after setting the Vercel environment variable.
+
+The form offers a direct email link if a submission fails.
 
 ## Structure
 - `src/components/`: Reusable UI components.
