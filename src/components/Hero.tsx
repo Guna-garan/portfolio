@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Download, FileText, Github, Linkedin, Mail } from "lucide-react";
 import RoleRotator from "./RoleRotator";
 import { socials } from "@/data/content";
 import { useDeviceCapability } from "@/lib/use-device";
@@ -57,6 +57,25 @@ export default function Hero() {
                 className="rounded-full border border-line px-6 py-3 text-sm font-semibold text-mist-bright transition-colors hover:border-signal-cyan/40 hover:text-signal-cyan"
               >
                 Get in touch
+              </a>
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor-hover
+                className="inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 text-sm font-semibold text-mist-bright transition-colors hover:border-signal-cyan/40 hover:text-signal-cyan"
+              >
+                <FileText size={16} />
+                View resume
+              </a>
+              <a
+                href="/resume.pdf"
+                download="resume.pdf"
+                data-cursor-hover
+                className="inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 text-sm font-semibold text-mist-bright transition-colors hover:border-signal-cyan/40 hover:text-signal-cyan"
+              >
+                <Download size={16} />
+                Download resume
               </a>
             </div>
 

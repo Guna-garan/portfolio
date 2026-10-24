@@ -8,6 +8,8 @@ export const roles = [
 export const stats = [
   { label: "Core stack mastered", value: "React · Spring Boot" },
   { label: "Focus area", value: "AI-driven systems" },
+  { label: "AWS · Docker · Deployment", value: "Cloud · DevOps" },
+  { label: "Java · DSA · System thinking", value: "Problem-solving" },
 ];
 
 export type Project = {
@@ -26,7 +28,7 @@ export const projects: Project[] = [
     description:
       "A full-stack inventory platform for tracking stock levels, purchase orders, and warehouse movement in real time, built for teams that need accuracy over spreadsheets.",
     stack: ["React", "Spring Boot", "REST API", "MySQL"],
-    github: "https://github.com/Guna-garan",
+    github: "https://github.com/Guna-garan/skg-inventory",
     highlights: [
       "Role-based dashboards for admins and staff",
       "Real-time stock alerts and low-inventory flags",
@@ -39,7 +41,7 @@ export const projects: Project[] = [
     description:
       "An intelligent screening tool that parses resumes and ranks candidates against job requirements, cutting manual review time for recruiters.",
     stack: ["Python", "NLP", "Machine Learning", "Flask"],
-    github: "https://github.com/Guna-garan",
+    github: "https://github.com/Guna-garan/SkillLens_AI",
     highlights: [
       "Automated keyword and skill extraction from resumes",
       "Candidate scoring model trained on labeled data",
@@ -52,7 +54,7 @@ export const projects: Project[] = [
     description:
     "A real-time polling platform that lets users create polls, share them with an audience, and view live voting results instantly without refreshing the page.",
     stack: ["React", "Go", "Gin", "MongoDB", "Redis", "WebSockets"],
-    github: "https://github.com/Guna-garan",
+    github: "https://github.com/Guna-garan/Live_Polling-",
     highlights: [
     "Real-time vote updates using Redis and WebSockets",
     "Secure authentication with protected poll creation and management",
@@ -66,7 +68,7 @@ export const projects: Project[] = [
     description:
       "A responsive online storefront with product browsing, cart management, and checkout flow, built from the ground up with core web technologies.",
     stack: ["HTML", "CSS", "JavaScript"],
-    github: "https://github.com/Guna-garan",
+    github: "https://github.com/Guna-garan/E-commerce-",
     highlights: [
       "Dynamic cart and checkout logic in vanilla JS",
       "Fully responsive across mobile, tablet, and desktop",
@@ -150,6 +152,7 @@ export type Certification = {
 };
 
 export const certifications: Certification[] = [
+  { title: "Networks and NetworkSecurity", issuer: "Coursera", year: "2026" },
   { title: "Programming with Java", issuer: "Coursera", year: "2026" },
   { title: "Introduction to Frontend Development", issuer: "Simplilearn", year: "2025" },
   { title: "AWS Solutions Architecture Job Simulation", issuer: "Forage", year: "2024" },
