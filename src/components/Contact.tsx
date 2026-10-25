@@ -7,13 +7,15 @@ const CONTACT_EMAIL = "gunagaran08@gmail.com";
 
 export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
+  const submittingRef = useRef(false);
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!formRef.current) return;
+    if (!formRef.current || submittingRef.current) return;
 
+    submittingRef.current = true;
     setStatus("loading");
     setErrorMessage("");
     try {
@@ -25,24 +27,30 @@ export default function Contact() {
           from_name: formData.get("from_name"),
           from_email: formData.get("from_email"),
           message: formData.get("message"),
+          website: formData.get("website"),
         }),
       });
-      const result: { error?: string } = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Your message could not be sent.");
+      const result: { ok?: boolean; error?: string } = await response
+        .json()
+        .catch(() => ({}));
+      if (!response.ok || result.ok !== true) {
+        throw new Error(
+          result.error || "Your message could not be sent. Please try again or email me directly."
+        );
       }
 
       setStatus("sent");
       formRef.current.reset();
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error: unknown) {
-      console.error("Contact form submission failed:", error);
       setErrorMessage(
         error instanceof Error
           ? error.message
           : "Your message could not be sent. Please try again or email me directly."
       );
       setStatus("error");
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -57,6 +65,7 @@ export default function Contact() {
       <motion.form
         ref={formRef}
         onSubmit={handleSubmit}
+        aria-busy={status === "loading"}
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
@@ -70,6 +79,7 @@ export default function Contact() {
               name="from_name"
               type="text"
               required
+              maxLength={100}
               placeholder="Your name"
               className="peer w-full rounded-xl border border-line bg-white/[0.02] px-4 py-3 text-sm text-mist-bright outline-none transition-colors placeholder:text-mist/50 focus:border-signal-cyan/50"
             />
@@ -80,6 +90,7 @@ export default function Contact() {
               name="from_email"
               type="email"
               required
+              maxLength={254}
               placeholder="you@email.com"
               className="peer w-full rounded-xl border border-line bg-white/[0.02] px-4 py-3 text-sm text-mist-bright outline-none transition-colors placeholder:text-mist/50 focus:border-signal-cyan/50"
             />
@@ -91,13 +102,29 @@ export default function Contact() {
             name="message"
             required
             rows={5}
+            maxLength={5000}
             placeholder="Tell me about what you're building..."
             className="peer w-full resize-none rounded-xl border border-line bg-white/[0.02] px-4 py-3 text-sm text-mist-bright outline-none transition-colors placeholder:text-mist/50 focus:border-signal-cyan/50"
           />
         </Field>
 
+        <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
+          <label htmlFor="website">Leave this field empty</label>
+          <input
+            id="website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
+        <p role="status" aria-live="polite" className="sr-only">
+          {status === "sent" ? "Your message was sent successfully." : ""}
+        </p>
+
         {status === "error" && (
-          <p className="flex items-center gap-2 text-sm text-red-400">
+          <p role="alert" className="flex items-center gap-2 text-sm text-red-400">
             <AlertCircle size={16} />
             {errorMessage}{" "}
             <a
