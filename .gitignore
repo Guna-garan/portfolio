@@ -1,8 +1,8 @@
 /node_modules
 /dist
+/dist-server
 .env
 .env*.local
 .DS_Store
 *.log
 .env.example
-api token = 930d7a65666f5a9184dda3bc993c17656bd87b6e331c7ff0553b0279eee4e652

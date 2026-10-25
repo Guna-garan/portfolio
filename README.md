@@ -1,135 +1,127 @@
 # Gunagaran Portfolio
 
-This is a modern, responsive portfolio built with React, Vite, and Tailwind CSS.
+This is a responsive portfolio built with React, Vite, and Tailwind CSS.
 
-## Features
-
-- Interactive tsParticles background.
-- Responsive design for mobile and desktop.
-- Framer Motion animations.
-- SEO metadata and accessible form controls.
-
-## Installation
+## Run locally
 
 ```bash
 npm install
-npm run dev
+npm run build
+npm start
 ```
 
-## Contact form: Google Sheets
+The Express server serves the production Vite build and handles the contact
+API on the same origin. Set the environment variables from `.env.example`
+before testing contact submissions. The Vite-only development server (`npm
+run dev`) does not run the API.
 
-The contact form posts to the existing `/api/contact` Vercel function. The
-function validates the submission and sends it to the Google Apps Script web
-app. Apps Script validates it again and adds one row to the configured Google
-spreadsheet. The browser never receives the Apps Script token.
+## Contact form and Google Sheets
 
-### Configure Google Sheets and Apps Script
+The existing form submits `from_name`, `from_email`, and `message` to
+`POST /api/contact`. The Express backend validates the request and forwards
+only those fields, plus a server-held token, to Google Apps Script. Apps Script
+validates the token and fields and appends a row in the spreadsheet.
 
-1. Create a Google spreadsheet named **Portfolio Contact Submissions**. Open
-   its URL and copy the spreadsheet ID: it is the value between `/d/` and
-   `/edit`.
-2. In the spreadsheet, use the first sheet (tab) for submissions. Its first
-   row must be exactly `Name`, `Email`, `Message` in columns A, B, and C. The
-   script adds that header row automatically only if the sheet is completely
-   empty; it will refuse to append if a non-empty sheet has different headers.
-3. Open **Extensions → Apps Script** from the spreadsheet. Replace the editor
-   contents with [`google-apps-script/Code.gs`](./google-apps-script/Code.gs)
-   and save the project.
-4. In Apps Script, open **Project Settings → Script Properties → Add script
-   property**. Add:
-   - `SPREADSHEET_ID`: the spreadsheet ID copied in step 1.
-   - `CONTACT_API_TOKEN`: a unique random token of at least 32 characters.
-     Generate it with a password manager or a cryptographically secure
-     generator. Do not put it in the script source or a spreadsheet cell.
-5. Click **Deploy → New deployment**, select the gear icon and **Web app**.
-   Choose **Execute as: Me** so writes use your spreadsheet permissions.
-   Choose **Who has access: Anyone** only if public visitors must submit
-   without signing in. Review the access warning below. Click **Deploy** and
-   complete Google's authorization prompts.
-6. Copy the deployed web app URL (ending in `/exec`). Do not use the
-   development `/dev` URL for the live site.
-7. Test via the API after configuring its two environment variables. A direct
-   Apps Script call without the matching token should return JSON with
-   `ok: false`; a successful request through `/api/contact` should return
-   `{"ok":true}` and add a row.
+### Google Apps Script setup
 
-Apps Script `ContentService` responses do not let the script choose an HTTP
-status code. The script therefore signals failures with `{"ok":false,...}` in
-JSON, and the Vercel API treats anything except an HTTP-success response with
-`{"ok":true}` as an upstream failure.
+If not already configured:
 
-### Configure local development and Vercel
+1. Create a spreadsheet named **Portfolio Contact Submissions**. Its first
+   sheet should have `Name`, `Email`, and `Message` in row 1, columns A–C.
+2. Open **Extensions → Apps Script**, add the code from
+   [`google-apps-script/Code.gs`](./google-apps-script/Code.gs), and save.
+3. In Apps Script **Project Settings → Script Properties**, configure
+   `SPREADSHEET_ID` and `CONTACT_API_TOKEN`. The token must be a unique,
+   randomly generated value with at least 32 characters. Do not put it in the
+   script source, spreadsheet, or a public URL.
+4. Deploy as a **Web app**, executing as **Me**. For visitors to submit without
+   signing in, set access to **Anyone** if Google Workspace permits it.
+   Authorize the requested spreadsheet access and copy the deployed `/exec`
+   URL (not the `/dev` URL).
 
-1. Copy `.env.example` to `.env.local` for local API development and set:
+An Apps Script web app with **Anyone** access is publicly reachable. Its URL
+is not an authentication secret. The script checks a separate token that
+should be stored only in Apps Script Script Properties and the server's
+environment. Anyone who obtains that token can submit rows; rotate it in both
+places if exposed. Apps Script's JSON content service reports failures through
+the response body, so the backend reports success only for a JSON response
+containing `{"ok":true}`.
 
-   ```dotenv
-   GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/DEPLOYMENT_ID/exec
-   GOOGLE_APPS_SCRIPT_TOKEN=the-same-random-token-as-the-script-property
+### Deploy as one Render Web Service
+
+1. In Render, select **New → Web Service**, connect the existing GitHub
+   repository, and select the branch you deploy from.
+2. Choose the repository root as the root directory.
+3. Set **Build Command** to:
+
+   ```text
+   npm install && npm run build
    ```
 
-   Replace the example URL and token; never commit `.env.local`.
-2. To run the API locally, use `npx vercel dev` (the regular Vite dev server
-   does not serve `/api/contact`).
-3. In Vercel, open the project **Settings → Environment Variables**. Add
-   `GOOGLE_APPS_SCRIPT_URL` and `GOOGLE_APPS_SCRIPT_TOKEN` for the environments
-   that need them (Production, Preview, and/or Development).
-4. Redeploy after adding or changing environment variables. Existing
-   deployments do not receive updated values.
+4. Set **Start Command** to:
 
-Do not prefix either variable with `VITE_`; these are read only by the
-server-side API. The API forwards only the three contact fields plus a
-server-held authentication token required by Apps Script. It does not forward
-arbitrary browser-supplied fields.
+   ```text
+   npm start
+   ```
 
-### Access and abuse limitations
+5. Add these environment variables under the Web Service's **Environment**
+   settings:
+   - `GOOGLE_APPS_SCRIPT_URL`: the deployed Apps Script `/exec` URL.
+   - `GOOGLE_APPS_SCRIPT_TOKEN`: the same random token as the Apps Script
+     `CONTACT_API_TOKEN` Script Property.
+6. Choose an appropriate instance plan, create the service, and deploy. The
+   server binds to Render's `PORT` environment variable.
+7. Open the Render service URL. The frontend and `/api/contact` are served by
+   the same origin. Confirm the contact endpoint responds and check that an
+   accepted message appears as a new row in Sheets.
 
-An **Anyone** web app is publicly reachable. The URL itself is not treated as
-a secret. The script requires a separate bearer token stored in Apps Script
-Script Properties and Vercel's server-side environment, not in browser code or
-the URL. Protect that token, rotate it in both places if exposed, and do not
-log request bodies. Anyone who obtains the token can submit rows.
+Never prefix these settings with `VITE_`; they are read only by the backend.
+Do not place them in frontend code or commit `.env` files. For local testing,
+copy `.env.example` to `.env.local` and set the same variables. Restart the
+server after changing local environment values; in Render, save the variables
+and redeploy/restart the service for them to take effect.
 
-The API also validates and caps inputs, includes a hidden honeypot, and applies
-a small in-memory per-IP rate limit when Vercel supplies `x-real-ip`. The
-in-memory limit is best-effort: serverless instances do not share state and
-may restart. It is not a substitute for a durable rate limiter or CAPTCHA if
-the form begins receiving significant spam. The form also blocks accidental
-double-click submissions in the browser.
+## API behavior and abuse protections
 
-## Contact form testing checklist
+- JSON request body limit: 32 KiB.
+- Name, email, and message limits: 100, 254, and 5000 characters.
+- Basic email format validation and control-character cleanup.
+- Honeypot field and in-memory limit of five requests per IP per ten minutes.
+- Eight-second timeout for the Apps Script request.
+- Generic client-facing errors; server logs do not include the submitted
+  message, email, token, or upstream response body.
+- Unknown `/api` paths and methods receive JSON errors, not the SPA document.
+  Other browser GET routes fall back to the Vite `index.html` for client-side
+  routing; existing static files are served first.
 
-- Submit valid name, email, and message; confirm one new row appears under
-  `Name`, `Email`, and `Message`.
-- Try a missing name, missing email, invalid email, and an empty message; the
-  browser and API should reject them without adding rows.
-- Try values longer than the limits (name 100, email 254, message 5000
-  characters), and an API body larger than 32 KiB; the API should reject them.
-- Send malformed JSON or a non-JSON request directly to `/api/contact`; it
-  should fail without exposing configuration or upstream details.
-- Temporarily use an unavailable Apps Script URL or mismatched token; the form
-  should show a generic failure and must not show success.
-- Submit repeatedly; the browser should prevent in-flight duplicate sends,
-  and the API's best-effort IP limiter may return HTTP 429 after five requests
-  in ten minutes per running instance.
-- Submit from a mobile browser and confirm the existing responsive form works.
-- After configuring Vercel, redeploy and repeat a valid submission on the
-  production domain; confirm separate accepted submissions produce separate
-  spreadsheet rows.
+The in-memory rate limiter is best-effort, resets when the service restarts,
+and is not shared between multiple instances. The honeypot is not a substitute
+for CAPTCHA or durable rate limiting if spam becomes significant.
 
-The live Google deployment and production submission must be tested after
-creating the spreadsheet and configuring the deployment credentials; this
-repository does not contain those values.
+## Verify the deployment
 
-## Structure
+1. Submit a valid message; confirm the UI reports success and a new row appears
+   in the spreadsheet. Submit another valid message and confirm it creates a
+   separate row.
+2. Test missing name/email, invalid email, empty message, long inputs, and a
+   non-empty honeypot. These must fail without adding a row.
+3. Test malformed JSON, a body over 32 KiB, a non-JSON request, and unknown
+   API paths; check for JSON errors and appropriate 400, 413, 415, or 404
+   statuses.
+4. Temporarily remove either environment variable or use an invalid Apps
+   Script URL/token; a valid-form request must fail without reporting success.
+   Restore the correct values afterward.
+5. Submit more than five requests from the same IP within ten minutes to
+   exercise the best-effort rate limit.
+6. Verify the responsive form on a mobile browser and repeat a valid
+   submission on the deployed Render URL.
 
-- `src/components/`: reusable portfolio components.
-- `src/data/`: portfolio content.
-- `api/`: Vercel serverless API routes.
-- `google-apps-script/`: code deployed from the Apps Script editor.
+The repository build does not test a live Apps Script deployment or write a
+real spreadsheet row. Those checks require the configured external services.
 
 ## Scripts
 
-- `npm run dev`: starts Vite.
-- `npm run build`: runs TypeScript project builds and creates the production
-  Vite bundle.
+- `npm run dev`: starts Vite only (frontend development; no contact API).
+- `npm run build`: type-checks and builds the frontend and TypeScript server.
+- `npm start`: serves the production build and API from Express.
 - `npm run lint`: runs ESLint.
