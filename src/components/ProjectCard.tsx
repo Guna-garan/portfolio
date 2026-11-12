@@ -1,37 +1,12 @@
-import { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import type { Project } from "@/data/content";
 import { useDeviceCapability } from "@/lib/use-device";
 
 export default function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
-  const { isTouch } = useDeviceCapability();
-
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(my, [0, 1], [6, -6]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(mx, [0, 1], [-6, 6]), { stiffness: 200, damping: 20 });
-
-  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    if (isTouch || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    mx.set((e.clientX - rect.left) / rect.width);
-    my.set((e.clientY - rect.top) / rect.height);
-  }
-
-  function handleMouseLeave() {
-    mx.set(0.5);
-    my.set(0.5);
-  }
-
-  const spotlightX = useTransform(mx, (v) => `${v * 100}%`);
-  const spotlightY = useTransform(my, (v) => `${v * 100}%`);
-  const spotlightBackground = useTransform(
-    [spotlightX, spotlightY],
-    ([sx, sy]) => `radial-gradient(280px circle at ${sx} ${sy}, rgba(77,232,224,0.12), transparent 70%)`
-  );
+  const { isTouch, prefersReducedMotion } = useDeviceCapability();
 
   return (
     <motion.div
@@ -39,23 +14,12 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay: index * 0.06, ease: "easeOut" }}
-      style={{ perspective: "1000px" }}
     >
       <motion.div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX: isTouch ? 0 : rotateX, rotateY: isTouch ? 0 : rotateY }}
+        whileHover={!isTouch && !prefersReducedMotion ? { y: -6, scale: 1.01 } : undefined}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
         className="glass relative overflow-hidden rounded-2xl border border-line p-6 transition-shadow hover:shadow-glow sm:p-7"
       >
-        {!isTouch && (
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100"
-            style={{ background: spotlightBackground }}
-          />
-        )}
-
         <div className="relative flex items-start justify-between gap-4">
           <h3 className="font-display text-xl font-semibold text-mist-bright">
             {project.title}

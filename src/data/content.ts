@@ -63,6 +63,19 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "Inksync",
+    title: "Inksync",
+    description:
+      "A generative model that produces realistic, human-like handwriting from typed text, exploring sequence modeling for stroke-level generation.",
+    stack: ["Python", "Deep Learning", "RNN", "TensorFlow"],
+    github: "https://github.com/Guna-garan/inksync",
+    highlights: [
+      "Stroke-sequence generation from text input",
+      "Style-conditioned handwriting variation",
+      "Exported vector output for rendering at any scale",
+    ],
+  },
+  {
     id: "ecommerce-platform",
     title: "E-Commerce Platform",
     description:
@@ -73,19 +86,6 @@ export const projects: Project[] = [
       "Dynamic cart and checkout logic in vanilla JS",
       "Fully responsive across mobile, tablet, and desktop",
       "Optimized asset loading for fast page speed",
-    ],
-  },
-  {
-    id: "handwriting-synthesis",
-    title: "Handwriting Synthesis",
-    description:
-      "A generative model that produces realistic, human-like handwriting from typed text, exploring sequence modeling for stroke-level generation.",
-    stack: ["Python", "Deep Learning", "RNN", "TensorFlow"],
-    github: "https://github.com/Guna-garan",
-    highlights: [
-      "Stroke-sequence generation from text input",
-      "Style-conditioned handwriting variation",
-      "Exported vector output for rendering at any scale",
     ],
   },
 ];
