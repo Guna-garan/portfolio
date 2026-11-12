@@ -164,10 +164,6 @@ export default function HeroImageAnimation() {
         {/* ── Holographic ambient glow (behind everything) ─────────── */}
         <motion.div
           aria-hidden="true"
-          style={{
-            x: isMobile || reduceEffects ? 0 : glowX,
-            y: isMobile || reduceEffects ? 0 : glowY,
-          }}
           animate={
             reduceEffects
               ? undefined
